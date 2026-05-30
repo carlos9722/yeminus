@@ -31,14 +31,9 @@ export class DashboardComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: () => {
-        this.auth.logout();
-        this.errorMessage.set('Sesión expirada. Inicia sesión de nuevo.');
+        this.errorMessage.set('No se pudo cargar la sesión.');
         this.isLoading.set(false);
       }
     });
-  }
-
-  protected logout(): void {
-    this.auth.logout();
   }
 }

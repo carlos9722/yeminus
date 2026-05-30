@@ -13,31 +13,38 @@ CREATE TABLE users (
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- Clientes
+-- Clientes (soft delete con deleted_at)
 CREATE TABLE clients (
     id              SERIAL PRIMARY KEY,
     full_name       VARCHAR(150) NOT NULL,
-    identity_doc    VARCHAR(30)  NOT NULL UNIQUE,
+    identity_doc    VARCHAR(30)  NOT NULL,
     address         VARCHAR(250) NOT NULL,
     phone           VARCHAR(20)  NOT NULL,
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    deleted_at      TIMESTAMPTZ  NULL
 );
 
--- Técnicos
+-- Documento único solo entre clientes activos (no eliminados)
+CREATE UNIQUE INDEX idx_clients_identity_doc_active
+    ON clients (identity_doc)
+    WHERE deleted_at IS NULL;
+
+-- Técnicos (soft delete)
 CREATE TABLE technicians (
     id              SERIAL PRIMARY KEY,
     full_name       VARCHAR(150) NOT NULL,
     phone           VARCHAR(20)  NOT NULL,
     specialty       VARCHAR(100) NOT NULL,
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    deleted_at      TIMESTAMPTZ  NULL
 );
 
 -- Estados de orden (catálogo fijo)
 CREATE TYPE order_status AS ENUM ('Pendiente', 'EnProgreso', 'Finalizada');
 
--- Órdenes de servicio
+-- Órdenes de servicio (soft delete)
 CREATE TABLE service_orders (
     id              SERIAL PRIMARY KEY,
     created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
@@ -45,7 +52,8 @@ CREATE TABLE service_orders (
     description     TEXT         NOT NULL,
     technician_id   INT          NOT NULL REFERENCES technicians(id),
     client_id       INT          NOT NULL REFERENCES clients(id),
-    updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    updated_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    deleted_at      TIMESTAMPTZ  NULL
 );
 
 -- Índices para filtros del listado
@@ -53,8 +61,10 @@ CREATE INDEX idx_service_orders_status ON service_orders (status);
 CREATE INDEX idx_service_orders_created_at ON service_orders (created_at);
 CREATE INDEX idx_service_orders_technician_id ON service_orders (technician_id);
 CREATE INDEX idx_service_orders_client_id ON service_orders (client_id);
-CREATE INDEX idx_technicians_specialty ON technicians (specialty);
-CREATE INDEX idx_clients_identity_doc ON clients (identity_doc);
+CREATE INDEX idx_technicians_specialty ON technicians (specialty) WHERE deleted_at IS NULL;
+CREATE INDEX idx_technicians_deleted_at ON technicians (deleted_at);
+CREATE INDEX idx_clients_deleted_at ON clients (deleted_at);
+CREATE INDEX idx_service_orders_deleted_at ON service_orders (deleted_at);
 
 -- Usuario precargado: admin / Admin123!
 -- Hash BCrypt generado en BD (compatible con BCrypt.Net-Next en .NET)

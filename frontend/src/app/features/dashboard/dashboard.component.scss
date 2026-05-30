@@ -1,7 +1,6 @@
 .dashboard {
   max-width: 720px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  padding: 0.5rem;
 }
 
 .meta {
@@ -9,18 +8,12 @@
 }
 
 .info {
-  margin: 1.5rem 0;
+  margin-top: 1rem;
   padding: 1rem;
-  background: #f3f4f6;
-  border-radius: 8px;
-}
-
-.btn-logout {
-  padding: 0.6rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
   background: #fff;
-  cursor: pointer;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #4b5563;
 }
 
 .error {

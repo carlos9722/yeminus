@@ -50,7 +50,9 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddSingleton<IJwtTokenService, JwtTokenService>();
 
 var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>()

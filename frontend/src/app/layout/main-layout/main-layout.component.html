@@ -1,0 +1,41 @@
+<div class="layout">
+  <aside class="sidebar" aria-label="Menú principal">
+    <div class="sidebar-brand">
+      <span class="brand-icon">SO</span>
+      <span class="brand-text">Service Orders</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of navItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="nav-item--active"
+          class="nav-item"
+          [routerLinkActiveOptions]="linkActiveOptions(item.route)"
+        >
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <div class="layout-main">
+    <header class="navbar">
+      <h1 class="navbar-title">Gestión de órdenes de servicio</h1>
+
+      <div class="navbar-actions">
+        @if (user(); as profile) {
+          <div class="user-chip">
+            <span class="user-name">{{ profile.fullName }}</span>
+            <span class="user-role">{{ profile.username }}</span>
+          </div>
+        }
+        <button type="button" class="btn-logout" (click)="logout()">Cerrar sesión</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

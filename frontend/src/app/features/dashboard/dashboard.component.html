@@ -1,13 +1,10 @@
 <section class="dashboard">
   @if (isLoading()) {
-    <p>Cargando sesión...</p>
+    <p>Cargando...</p>
   } @else if (user(); as profile) {
     <h1>Bienvenido, {{ profile.fullName }}</h1>
     <p class="meta">Usuario: <strong>{{ profile.username }}</strong></p>
-    <p class="info">
-      Sesión activa.
-    </p>
-    <button type="button" class="btn-logout" (click)="logout()">Cerrar sesión</button>
+ 
   } @else if (errorMessage(); as error) {
     <p class="error" role="alert">{{ error }}</p>
   }
