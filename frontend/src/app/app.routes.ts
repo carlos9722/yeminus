@@ -6,8 +6,10 @@ import { LoginComponent } from './features/auth/login/login.component';
 import { ClientFormComponent } from './features/clients/client-form/client-form.component';
 import { ClientListComponent } from './features/clients/client-list/client-list.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
-import { OrderShellComponent } from './features/orders/order-shell/order-shell.component';
-import { TechnicianShellComponent } from './features/technicians/technician-shell/technician-shell.component';
+import { OrderFormComponent } from './features/orders/order-form/order-form.component';
+import { OrderListComponent } from './features/orders/order-list/order-list.component';
+import { TechnicianFormComponent } from './features/technicians/technician-form/technician-form.component';
+import { TechnicianListComponent } from './features/technicians/technician-list/technician-list.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 
 export const routes: Routes = [
@@ -21,8 +23,12 @@ export const routes: Routes = [
       { path: 'clients', component: ClientListComponent },
       { path: 'clients/new', component: ClientFormComponent },
       { path: 'clients/:id/edit', component: ClientFormComponent },
-      { path: 'technicians', component: TechnicianShellComponent },
-      { path: 'orders', component: OrderShellComponent },
+      { path: 'technicians', component: TechnicianListComponent },
+      { path: 'technicians/new', component: TechnicianFormComponent },
+      { path: 'technicians/:id/edit', component: TechnicianFormComponent },
+      { path: 'orders', component: OrderListComponent },
+      { path: 'orders/new', component: OrderFormComponent },
+      { path: 'orders/:id/edit', component: OrderFormComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

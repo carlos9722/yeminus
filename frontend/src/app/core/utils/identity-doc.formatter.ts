@@ -1,3 +1,7 @@
+export function stripIdentityDocDigits(value: string): string {
+  return value.replace(/\D/g, '');
+}
+
 export function formatIdentityDoc(value: string): string {
   const digits = value.replace(/\D/g, '');
   if (digits.length === 0) {

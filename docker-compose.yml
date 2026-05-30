@@ -11,7 +11,7 @@ services:
       POSTGRES_DB: serviceorders_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/init:/docker-entrypoint-initdb.d:ro
+      - ./database/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U root -d serviceorders_db"]
       interval: 5s

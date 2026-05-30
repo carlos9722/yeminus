@@ -1,0 +1,159 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.page-header h1 {
+  margin: 0;
+}
+
+.btn-primary {
+  padding: 0.6rem 1rem;
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  padding: 0.6rem 1rem;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.filters-card {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.filters-card h2 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+}
+
+.desc {
+  max-width: 220px;
+}
+
+.sub {
+  display: block;
+  font-weight: 500;
+}
+
+.muted {
+  display: block;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.actions a {
+  color: #1d4ed8;
+}
+
+.btn-danger {
+  border: none;
+  background: transparent;
+  color: #b91c1c;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+.empty {
+  color: #6b7280;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.status-Pendiente {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.status-EnProgreso {
+  color: #1e40af;
+  background: #dbeafe;
+}
+
+.status-Finalizada {
+  color: #166534;
+  background: #dcfce7;
+}

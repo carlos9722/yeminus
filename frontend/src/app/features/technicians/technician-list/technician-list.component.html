@@ -1,0 +1,42 @@
+<section class="page">
+  <header class="page-header">
+    <h1>Técnicos</h1>
+    <a routerLink="/technicians/new" class="btn-primary">Nuevo técnico</a>
+  </header>
+
+  @if (isLoading()) {
+    <p>Cargando técnicos...</p>
+  } @else if (errorMessage(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  } @else if (technicians().length === 0) {
+    <p class="empty">No hay técnicos registrados.</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Especialidad</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tech of technicians(); track tech.id) {
+            <tr>
+              <td>{{ tech.fullName }}</td>
+              <td>{{ tech.phone }}</td>
+              <td>{{ tech.specialty }}</td>
+              <td class="actions">
+                <a [routerLink]="['/technicians', tech.id, 'edit']">Editar</a>
+                <button type="button" class="btn-danger" (click)="deleteTechnician(tech)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

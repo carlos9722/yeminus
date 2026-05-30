@@ -1,0 +1,106 @@
+<section class="page">
+  <header class="page-header">
+    <h1>Órdenes de servicio</h1>
+    <a routerLink="/orders/new" class="btn-primary">Nueva orden</a>
+  </header>
+
+  <form class="filters-card" [formGroup]="filterForm" (ngSubmit)="search()">
+    <h2>Filtros</h2>
+    <div class="filters-grid">
+      <div class="field">
+        <label for="status">Filtrar por estado</label>
+        <select id="status" formControlName="status">
+          <option value="">Todos</option>
+          @for (opt of statusOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </div>
+      <div class="field">
+        <label for="technicianName">Nombre del técnico</label>
+        <input id="technicianName" type="text" formControlName="technicianName" placeholder="Ej: Juan" />
+      </div>
+      <div class="field">
+        <label for="technicianSpecialty">Especialidad del técnico</label>
+        <input
+          id="technicianSpecialty"
+          type="text"
+          formControlName="technicianSpecialty"
+          placeholder="Ej: Electricidad"
+        />
+      </div>
+      <div class="field">
+        <label for="clientName">Nombre del cliente</label>
+        <input id="clientName" type="text" formControlName="clientName" />
+      </div>
+      <div class="field">
+        <label for="clientIdentityDoc">Documento del cliente</label>
+        <input id="clientIdentityDoc" type="text" formControlName="clientIdentityDoc" />
+      </div>
+      <div class="field">
+        <label for="createdFrom">Fecha desde</label>
+        <input id="createdFrom" type="date" formControlName="createdFrom" />
+      </div>
+      <div class="field">
+        <label for="createdTo">Fecha hasta</label>
+        <input id="createdTo" type="date" formControlName="createdTo" />
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn-primary">Buscar</button>
+      <button type="button" class="btn-secondary" (click)="clearFilters()">Limpiar</button>
+    </div>
+  </form>
+
+  @if (isLoading()) {
+    <p>Cargando órdenes...</p>
+  } @else if (errorMessage(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  } @else if (orders().length === 0) {
+    <p class="empty">No hay órdenes con los filtros aplicados.</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Descripción</th>
+            <th>Técnico</th>
+            <th>Cliente</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order.id) {
+            <tr>
+              <td>{{ order.id }}</td>
+              <td>{{ formatDate(order.createdAt) }}</td>
+              <td>
+                <span class="status-badge" [class]="'status-' + order.status">
+                  {{ orderStatusLabel(order.status) }}
+                </span>
+              </td>
+              <td class="desc">{{ order.description }}</td>
+              <td>
+                <span class="sub">{{ order.technicianName }}</span>
+                <span class="muted">{{ order.technicianSpecialty }}</span>
+              </td>
+              <td>
+                <span class="sub">{{ order.clientName }}</span>
+                <span class="muted">{{ order.clientIdentityDoc }}</span>
+              </td>
+              <td class="actions">
+                <a [routerLink]="['/orders', order.id, 'edit']">Editar</a>
+                <button type="button" class="btn-danger" (click)="deleteOrder(order)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

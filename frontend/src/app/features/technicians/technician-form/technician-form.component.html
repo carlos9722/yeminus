@@ -1,0 +1,58 @@
+<section class="page">
+  <a routerLink="/technicians" class="back-link">← Volver al listado</a>
+  <h1>{{ pageTitle() }}</h1>
+
+  @if (isLoading()) {
+    <p>Cargando técnico...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="form-card">
+      <div class="field">
+        <label for="fullName">Nombre completo <span class="required">*</span></label>
+        <input
+          id="fullName"
+          type="text"
+          formControlName="fullName"
+          [class.invalid]="isInvalid('fullName')"
+        />
+      </div>
+
+      <div class="field">
+        <label for="phoneNumber">Teléfono <span class="required">*</span></label>
+        <div class="phone-row" [class.invalid]="isInvalid('phoneNumber')">
+          <span class="phone-prefix" aria-hidden="true">{{ phonePrefix }}</span>
+          <input
+            id="phoneNumber"
+            type="tel"
+            formControlName="phoneNumber"
+            inputmode="numeric"
+            maxlength="10"
+            placeholder="3001234567"
+            (input)="onPhoneNumberInput($event)"
+          />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="specialty">Especialidad <span class="required">*</span></label>
+        <input
+          id="specialty"
+          type="text"
+          formControlName="specialty"
+          placeholder="Ej: Electricidad, Plomería"
+          [class.invalid]="isInvalid('specialty')"
+        />
+      </div>
+
+      @if (errorMessage(); as error) {
+        <p class="form-error" role="alert">{{ error }}</p>
+      }
+
+      <div class="actions">
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Guardando...' : 'Guardar' }}
+        </button>
+        <a routerLink="/technicians" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  }
+</section>
