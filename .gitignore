@@ -1,0 +1,27 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Angular / Node
+node_modules/
+dist/
+.angular/
+*.log
+
+# IDE
+.idea/
+*.swp
+
+# Temp
+.temp-hash/
+
+# Environment
+.env
+.env.local
+appsettings.Development.local.json
+
+# Docker volumes (local)
+postgres_data/
