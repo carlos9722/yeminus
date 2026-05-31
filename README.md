@@ -13,51 +13,94 @@ Solo usé **PostgreSQL** (el enunciado menciona Oracle también, pero en mi máq
 
 ## Requisitos en tu PC
 
-- Docker Desktop
-- .NET SDK 8
-- Node.js + Angular CLI (`ng`)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [.NET SDK 8](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Node.js](https://nodejs.org/) (LTS recomendado)
+- Angular CLI: `npm install -g @angular/cli`
 
-## Cómo levantar el proyecto
+Comprobar que todo esté instalado:
 
-### 1. Base de datos
+```powershell
+docker --version
+dotnet --version
+node --version
+npm --version
+ng version
+```
 
-En la raíz del repo:
+## Instalación (primera vez)
+
+Clona o descomprime el proyecto y, en la **raíz del repo**, ejecuta:
+
+### 1. Dependencias del backend
+
+```powershell
+cd backend
+dotnet restore
+cd ..
+```
+
+### 2. Dependencias del frontend
+
+```powershell
+cd frontend
+npm install
+cd ..
+```
+
+> Si `ng` no se reconoce: `npm install -g @angular/cli` y vuelve a abrir la terminal.
+
+### 3. Base de datos (Docker)
+
+Desde la raíz (donde está `docker-compose.yml`):
 
 ```powershell
 docker compose up -d
 ```
 
-Postgres queda en **localhost:5433** (usuario `root`, clave `123456`, BD `serviceorders_db`).
+La primera vez descarga la imagen de Postgres y ejecuta `database/01_schema.sql` (tablas + usuario **admin**).
 
-La primera vez se ejecuta `database/01_schema.sql` y crea las tablas + usuario admin.
-
-### 2. Datos de prueba (opcional)
+### 4. Datos de prueba (opcional)
 
 ```powershell
 Get-Content "database/02_seed_test_data.sql" | docker exec -i serviceorders-postgres psql -U root -d serviceorders_db
 ```
 
-Eso borra clientes/técnicos/órdenes y mete datos de ejemplo (el admin no se toca).
+---
 
-### 3. API
+## Cómo levantar el proyecto (cada vez que desarrollas)
+
+Abre **dos terminales** (API y frontend).
+
+### Terminal 1 — API
 
 ```powershell
 cd backend
 dotnet run --launch-profile http
 ```
 
-Swagger: http://localhost:5249/swagger
+- Swagger: http://localhost:5249/swagger  
+- Si falla el build porque el `.dll` está bloqueado, detén este proceso y vuelve a ejecutar.
 
-### 4. Frontend
+### Terminal 2 — Frontend
 
 ```powershell
 cd frontend
 ng serve
 ```
 
-App: http://localhost:4200
+- App: http://localhost:4200  
+- El proxy (`proxy.conf.json`) envía `/api` → `http://localhost:5249`
 
-El proxy de Angular manda `/api` al puerto 5249.
+### Base de datos
+
+Si Docker no está corriendo:
+
+```powershell
+docker compose up -d
+```
+
+Postgres: **localhost:5433** — usuario `root`, clave `123456`, BD `serviceorders_db`.
 
 ## Login
 
@@ -76,9 +119,24 @@ Los borrados son **soft delete** (`deleted_at`), no se hace `DELETE` físico en 
 
 ## Arquitectura
 
-No es una arquitectura enorme, pero sí separé responsabilidades para que el código sea fácil de seguir y probar.
+| Parte | Nombre / estilo |
+|-------|------------------|
+| **Backend** | **Arquitectura en capas** (N-Capas) + **API REST** + patrón **Repository** |
+| **Frontend** | **SPA** Angular con organización **por features** + componentes **standalone** |
 
-### Backend (.NET)
+No es microservicios ni Clean Architecture completa; es una estructura clara para una prueba técnica de tamaño medio.
+
+### Backend (.NET) — Capas + Repository
+
+**Nombre:** arquitectura en **capas** (presentación → negocio → datos) sobre una **Web API REST**.
+
+| Capa | Carpeta | Rol |
+|------|---------|-----|
+| Presentación | `Controllers/` | HTTP, rutas, códigos de respuesta |
+| Negocio | `Services/` | Reglas y validaciones |
+| Datos | `Repositories/` | SQL con Dapper (patrón **Repository**) |
+| Transversal | `Infrastructure/`, `Helpers/` | Conexión BD, utilidades |
+| Modelos | `Models/` | DTOs, requests y entidades que mapean tablas |
 
 Flujo típico de una petición:
 
@@ -86,24 +144,23 @@ Flujo típico de una petición:
 Cliente HTTP → Controller → Service → Repository (Dapper + SQL) → PostgreSQL
 ```
 
-| Carpeta | Para qué la usé |
-|---------|------------------|
-| `Controllers/` | Reciben HTTP, validan el modelo (`[FromBody]`, Data Annotations) y devuelven 200/400/404, etc. Casi no tienen lógica de negocio. |
-| `Services/` | Reglas: teléfono válido, documento duplicado, que el técnico/cliente exista al crear una orden, etc. |
-| `Repositories/` | **Todo el SQL** con Dapper. Aquí están los `SELECT`, `INSERT … RETURNING`, soft delete y el filtro dinámico de órdenes (`StringBuilder` + parámetros). |
-| `Models/` | DTOs para la API, requests de entrada y entidades que mapean filas de la BD. |
-| `Infrastructure/` | Conexión a Postgres (`IDbConnectionFactory`) y constantes como `EntitySqlFilters.ActiveOnly` (`deleted_at IS NULL`). |
-| `Helpers/` | Cosas chicas reutilizables: validar teléfono, estados de orden, normalizar filtros. |
-
 **Auth:** `AuthController` + `UserRepository` (login con `crypt` en Postgres). El JWT lo genera `JwtTokenService` y los endpoints de negocio llevan `[Authorize]`.
 
 **Inyección de dependencias:** en `Program.cs` registro interfaces → implementaciones (`IClientService` → `ClientService`, etc.).
 
 No usé Entity Framework a propósito: el enunciado pedía SQL manual y en los filtros de órdenes necesitaba armar la consulta según lo que mande el usuario.
 
-### Frontend (Angular)
+### Frontend (Angular) — SPA por features
 
-Organización por **features** + carpeta **core** compartida:
+**Nombre:** **Single Page Application (SPA)** con carpetas **por dominio (feature-based)** y componentes **standalone** (sin `NgModule` por módulo).
+
+| Zona | Carpeta | Rol |
+|------|---------|-----|
+| Núcleo compartido | `core/` | Servicios HTTP, guards, interceptor JWT, modelos |
+| Pantallas | `features/` | Un feature por dominio (auth, clients, technicians, orders) |
+| Shell | `layout/` | Layout con menú y navbar |
+
+Estructura:
 
 ```
 app/
@@ -153,4 +210,3 @@ prueba tecnica/
 
 - Si cambias el SQL del esquema y la BD ya existía: `docker compose down -v` y vuelve a subir el contenedor.
 - Si `dotnet build` falla porque el `.dll` está bloqueado, detén la API antes de compilar.
-
